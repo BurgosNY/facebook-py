@@ -105,9 +105,11 @@ def detail_communities(facebook_insights, detailed_report):
                 block[x] = None
         data.append(block)
         block = {}
-        df = pd.DataFrame(data)
-        print 'Found the details of ' + str(len(df)) + ' pages'
-        df.to_csv(detailed_report, encoding='utf-8')
+    df = pd.DataFrame(data)
+    print 'Found the details of ' + str(len(df)) + ' pages'
+    print 'open ' + facebook_insights + ' and ' + detailed_report + ' in this folder for more information'
+    print '\n'
+    df.to_csv(detailed_report, encoding='utf-8')
 
 ## Running the functions
 get_communities(facebook_insights, report)
