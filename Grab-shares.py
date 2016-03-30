@@ -1,30 +1,34 @@
-import pandas as pd
-import numpy as np
-import requests
-from collections import Counter
-import facebook
+## You need to change the first three values here for the code to work properly.
 
 ## Use the API Key from Facebook Developer
-API = ''
+API = 'CAACEdEose0cBAJMvgZC6JjSXZBZBGGZArWFaafa82nXXuEhNG0dm7JBri8bXuIWbRYHGphZCTlAKXurb2dUknPToEswwW2kxzdLlTZBchdOTlxyumJlw1Kx8p6ksOZAiEUuyvinQ1mD6ToY8f8f8SKz6HZAJZAIYYplFvQGTjzdMDhx8hZBB56htejvWZA865SBmGhgqLkqB9HtR5cpaw3w1CZCc'
 
 ## Put here the downloaded csv from Facebook Insights
-facebook_insights = ''
+facebook_insights = 'Facebook.csv'
 
-## 
+## Put here the names of the output files
+report = 'example.csv'
+detailed_report = 'example_detail.csv'
+
+## Importing the libraries
+import pandas as pd
+import requests
+import facebook
+
 graph = facebook.GraphAPI(access_token=API)
 
 # Using a csv provided by Facebook Insights to extract the unique ids of each post in a given period.
 def get_posts_ids(facebook_insights):
-    
+    import pandas as pd
     ## using pandas to read csv:
     facedata = pd.read_csv(facebook_insights)
     ids = []
     
     ## A valid post ID is in the format (page_id_post_id). For The Marshall Project, the ID is "1442785962603494".
     ## (This is useful only for old Facebook Insights csvs. the new ones com with the right format)
+    print 'processing ' + str(len(facedata)) + ' posts'
     for x in range(len(facedata)):
-        unique_id = facedata['Post ID']
-        print unique_id
+        unique_id = facedata['\xef\xbb\xbf"Post ID"'][x]
         ids.append(unique_id)
     return ids
 
@@ -56,26 +60,29 @@ def find_shares(post_id):
     return data2
 
 # A function interating through all the posts, returning a list of dictionaries.
-def get_communities(facebook_insights, filename):
+def get_communities(facebook_insights, report):
     posts = get_posts_ids(facebook_insights)
     data = []
     for x in posts:
-        
-        ## It's useful to print the ID while the function runs, so if you hit an error you'll know which post caused it. 
-        print x
-        data += find_shares(x)
+        try:
+            data += find_shares(x)
+        except TypeError:
+            continue
+
 
     df = pd.DataFrame(data)
+    print 'Found ' + str(len(df)) + ' shares by pages'
     
     # If you want to return a Pandas DaTaframe, "uncomment" the next line
     # return df
     
     # Return a csv file with the provided filename
-    df.to_csv(filename, encoding='utf-8')
+    df.to_csv(report, encoding='utf-8')
 
 # Using the newly created csvfile, we can create a new one with more details:
-def detail_communities(csvfile):
-    facedata = pd.read_csv(csvfile)
+def detail_communities(facebook_insights, detailed_report):
+    from collections import Counter 
+    facedata = pd.read_csv(facebook_insights)
     frequency = dict(Counter(facedata['user_url']))
     categories = ['likes', 'category', 'website', 'description', 'phone', 'link',
                   'about', 'name', 'mission']
@@ -98,4 +105,12 @@ def detail_communities(csvfile):
                 block[x] = None
         data.append(block)
         block = {}
-    return data
+        df = pd.DataFrame(data)
+        print 'Found the details of ' + str(len(df)) + ' pages'
+        df.to_csv(detailed_report, encoding='utf-8')
+
+## Running the functions
+get_communities(facebook_insights, report)
+detail_communities(report, detailed_report)
+
+
