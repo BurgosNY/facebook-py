@@ -8,8 +8,8 @@ If you manage a page, it's always important to identify the biggest fans and fol
 
 * Python 2.7
 * Facebook Python SDK (download [here](https://github.com/pythonforfacebook/facebook-sdk), documentation [here](http://facebook-sdk.readthedocs.org/en/latest/api.html))
-* pandas (Python Library - [link](https://pypi.python.org/pypi/pandas/0.18.0/#downloads) or "pip install pandas")
-* requests (Python Library - [link](http://docs.python-requests.org/en/master/ or "pip install requests")
+* pandas (Python Library - [link](https://pypi.python.org/pypi/pandas/0.18.0/#downloads) or "pip install pandas"
+* requests (Python Library - [link](http://docs.python-requests.org/en/master/) or "pip install requests"
 * A Facebook Developer Acces Token code – [link](https://developers.facebook.com/)
 
 ## The .py file
