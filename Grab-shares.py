@@ -1,10 +1,11 @@
 ## You need to change the first three values here for the code to work properly.
 
-## Use the API Key from Facebook Developer
-API = 'CAACEdEose0cBAJMvgZC6JjSXZBZBGGZArWFaafa82nXXuEhNG0dm7JBri8bXuIWbRYHGphZCTlAKXurb2dUknPToEswwW2kxzdLlTZBchdOTlxyumJlw1Kx8p6ksOZAiEUuyvinQ1mD6ToY8f8f8SKz6HZAJZAIYYplFvQGTjzdMDhx8hZBB56htejvWZA865SBmGhgqLkqB9HtR5cpaw3w1CZCc'
 
-## Put here the downloaded csv from Facebook Insights
-facebook_insights = 'Facebook.csv'
+## Use the API Key from Facebook Developer
+API = 'CAACEdEose0cBAEZAX9NYOod1RGrB1VQtGzBCZCgbaDiWufZBOTX7i4Qh5l9sXf1wr94rBsRiqnfX8eLbZBengHloL9kQ7nGPVG0QlnzpFmb0BEFQUV0dxKKabsZCCMJQ5WPZBrvm4nVMYRy0J1N9BYhxMJNwh710Y80Lr6bYMGPfHdJEXopX6nPCHms4sYQAB32clyQZBXe7m8LF9x9d81t'
+
+## Put here your page id (default is The Marshall Project's ID)
+page_id = '1442785962603494'
 
 ## Put here the names of the output files
 report = 'example.csv'
@@ -18,19 +19,29 @@ import facebook
 graph = facebook.GraphAPI(access_token=API)
 
 # Using a csv provided by Facebook Insights to extract the unique ids of each post in a given period.
-def get_posts_ids(facebook_insights):
-    import pandas as pd
-    ## using pandas to read csv:
-    facedata = pd.read_csv(facebook_insights)
-    ids = []
-    
-    ## A valid post ID is in the format (page_id_post_id). For The Marshall Project, the ID is "1442785962603494".
-    ## (This is useful only for old Facebook Insights csvs. the new ones com with the right format)
-    print 'processing ' + str(len(facedata)) + ' posts'
-    for x in range(len(facedata)):
-        unique_id = facedata['\xef\xbb\xbf"Post ID"'][x]
-        ids.append(unique_id)
-    return ids
+
+def get_posts_ids(page_id):
+    posts = graph.get_connections(id=page_id, connection_name='posts')
+    allposts = []
+    for post in posts['data']:
+        allposts.append(post['id'])
+    return allposts
+
+def get_posts_ids_full(page_id):
+    posts = graph.get_connections(id=page_id, connection_name='posts')
+    allposts = []
+    while(True):
+        try:
+            for post in posts['data']:
+                allposts.append(post['id'])
+            # Attempt to make a request to the next page of data, if it exists.
+            posts=requests.get(posts['paging']['next']).json()
+        except KeyError:
+            # When there are no more pages (['paging']['next']), break from the
+            # loop and end the script.
+            break
+    return allposts
+
 
 # Function to find communities or groups that shared an individual posts. Returns list of dictionaries:
 def find_shares(post_id):
@@ -60,8 +71,8 @@ def find_shares(post_id):
     return data2
 
 # A function interating through all the posts, returning a list of dictionaries.
-def get_communities(facebook_insights, report):
-    posts = get_posts_ids(facebook_insights)
+def get_communities(page_id, report):
+    posts = get_posts_ids(page_id)
     data = []
     for x in posts:
         try:
@@ -80,9 +91,9 @@ def get_communities(facebook_insights, report):
     df.to_csv(report, encoding='utf-8')
 
 # Using the newly created csvfile, we can create a new one with more details:
-def detail_communities(facebook_insights, detailed_report):
+def detail_communities(report, detailed_report):
     from collections import Counter 
-    facedata = pd.read_csv(facebook_insights)
+    facedata = pd.read_csv(report)
     frequency = dict(Counter(facedata['user_url']))
     categories = ['likes', 'category', 'website', 'description', 'phone', 'link',
                   'about', 'name', 'mission']
@@ -107,12 +118,10 @@ def detail_communities(facebook_insights, detailed_report):
         block = {}
     df = pd.DataFrame(data)
     print 'Found the details of ' + str(len(df)) + ' pages'
-    print 'open ' + facebook_insights + ' and ' + detailed_report + ' in this folder for more information'
+    print 'open ' + report + ' and ' + detailed_report + ' in this folder for more information'
     print '\n'
     df.to_csv(detailed_report, encoding='utf-8')
 
 ## Running the functions
-get_communities(facebook_insights, report)
+get_communities(page_id, report)
 detail_communities(report, detailed_report)
-
-
