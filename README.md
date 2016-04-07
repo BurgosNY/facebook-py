@@ -14,7 +14,7 @@ If you manage a page, it's always important to identify the biggest fans and fol
 
 ## The .py file
 
-Follow the instructions in the comments. To make it easier to manipulate, put the .py and the Facebook insights csv file in the same directory. Edit the document to include your API (it only lasts for a couple of hours), Facebook Insihts filename and desired output filenames. Now grab and drop the folder in the terminal and type "python grab-shares.py".
+Follow the instructions in the comments. To make it easier to manipulate. Edit the document to include your API (it only lasts for a couple of hours), your page_id and the desired output filenames. Now grab and drop the folder in the terminal and type "python grab-shares.py".
 
 ## Is that all?
 
