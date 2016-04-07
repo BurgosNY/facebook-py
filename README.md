@@ -2,7 +2,7 @@
 
 ## What is this?
 
-If you manage a page, it's always important to identify the biggest fans and followers. For NGOs, "causes", or politicians (among others), it is extra interesting do understand who (literally) shares your ideas and stories. This little code will get you started with Facebook Python SDK. To make it easier to visualize what the script is doing, it will take a Facebook Insights CSV file as an input (which you can download through the page administrator interface) and create two other csvs with descriptions of the communities, pages and public figures that share your content[^1].
+If you manage a page, it's always important to identify the biggest fans and followers. For NGOs, "causes", or politicians (among others), it is extra interesting do understand who (literally) shares your ideas and stories. This little code will get you started with Facebook Python SDK. You'll need a page ID (a number with ~20 digits, usually). It creates two csvs with descriptions of the communities, pages and public figures that share your content[^1].
 
 ## What do you need?
 
