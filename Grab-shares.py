@@ -2,10 +2,10 @@
 
 
 ## Use the API Key from Facebook Developer
-API = 'CAACEdEose0cBAEZAX9NYOod1RGrB1VQtGzBCZCgbaDiWufZBOTX7i4Qh5l9sXf1wr94rBsRiqnfX8eLbZBengHloL9kQ7nGPVG0QlnzpFmb0BEFQUV0dxKKabsZCCMJQ5WPZBrvm4nVMYRy0J1N9BYhxMJNwh710Y80Lr6bYMGPfHdJEXopX6nPCHms4sYQAB32clyQZBXe7m8LF9x9d81t'
+API = ''
 
 ## Put here your page id (default is The Marshall Project's ID)
-page_id = '1442785962603494'
+page_id = ''
 
 ## Put here the names of the output files
 report = 'example.csv'
@@ -20,14 +20,15 @@ graph = facebook.GraphAPI(access_token=API)
 
 # Using a csv provided by Facebook Insights to extract the unique ids of each post in a given period.
 
-def get_posts_ids(page_id):
+# To test the function, you can run this part, which retrieves only the shares of the last 30 posts.
+def get_posts_ids_sample(page_id):
     posts = graph.get_connections(id=page_id, connection_name='posts')
     allposts = []
     for post in posts['data']:
         allposts.append(post['id'])
     return allposts
 
-def get_posts_ids_full(page_id):
+def get_posts_ids(page_id):
     posts = graph.get_connections(id=page_id, connection_name='posts')
     allposts = []
     while(True):
@@ -121,6 +122,8 @@ def detail_communities(report, detailed_report):
     print 'open ' + report + ' and ' + detailed_report + ' in this folder for more information'
     print '\n'
     df.to_csv(detailed_report, encoding='utf-8')
+
+
 
 ## Running the functions
 get_communities(page_id, report)
